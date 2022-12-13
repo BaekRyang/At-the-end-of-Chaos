@@ -58,7 +58,7 @@ public class CardManager : MonoBehaviour
             cards[i].desc = cardsGO[i].transform.Find("Desc").GetChild(0).GetComponent<TMP_Text>();
             cards[i].resWood = cards[i].img.transform.GetChild(0).Find("rWood").GetChild(0).GetComponent<TMP_Text>();
             cards[i].resIron = cards[i].img.transform.GetChild(0).Find("rIron").GetChild(0).GetComponent<TMP_Text>();
-            cards[i].rank = cardsGO[i].GetComponent<Image>();
+            cards[i].rank = cardsGO[i].transform.Find("Shield").GetComponent<Image>();
 
             switch (GameServerManager.instance.resolutionMode)
             { //카드의 설명이 낮은 해상도에서 너무 커지는 문제 수정용
@@ -93,7 +93,16 @@ public class CardManager : MonoBehaviour
         {
             rand = UnityEngine.Random.Range(1, tmpDeck.Count);
             tmpCardDef = tmpDeck[rand];
-            cards[i].img.sprite = images[0];
+            try
+            { //있으면 가져다 쓰고
+                //Debug.Log(tmpCardDef.title + " : " + tmpCardDef.cardCode);
+                cards[i].img.sprite = images[tmpCardDef.cardCode];
+            }
+            catch
+            { //없으면 기본 이미지로
+                cards[i].img.sprite = images[images.Length - 1];
+            }
+            
             cards[i].title.text = tmpCardDef.title;
             cards[i].desc.text = tmpCardDef.desc.Replace("\\n", "\n");
             cards[i].def = tmpCardDef;
@@ -104,10 +113,6 @@ public class CardManager : MonoBehaviour
             cards[i].rank.sprite = rank[tmpCardDef.rank-1];
             cards[i].rank.color = Color.white;
             tmpDeck.RemoveAt(rand);
-            if (!tmpCardDef.reuseable)
-            {
-                deck.Remove(tmpCardDef);
-            }
         }
         remainIron.text = remainIronI.ToString();
         remainWood.text = remainWoodI.ToString();
@@ -115,6 +120,7 @@ public class CardManager : MonoBehaviour
 
     public void CardSelect(int _cNum)
     {
+        //_cNum은 -1 쓰는것 주의
         if (remainIronI >= cards[_cNum - 1].resIronI && remainWoodI >= cards[_cNum - 1].resWoodI)
         {
             remainIronI -= cards[_cNum - 1].resIronI;
@@ -122,6 +128,11 @@ public class CardManager : MonoBehaviour
 
             remainIron.text = remainIronI.ToString();
             remainWood.text = remainWoodI.ToString();
+
+            if (!cards[_cNum-1].def.reuseable)
+            {
+                deck.Remove(cards[_cNum - 1].def);
+            }
 
             ResetCard();
         } else
