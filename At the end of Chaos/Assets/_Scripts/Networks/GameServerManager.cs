@@ -142,6 +142,8 @@ public class GameServerManager : MonoBehaviourPunCallbacks, IPunObservable
         mainCamera.GetComponent<CameraMovement>().player = player;
 
         //소리는 자신이 기준으로 되야 하므로 자신의 플레이어에만 AudioListener를 추가시켜준다.
+        
+        Camera.main.GetComponent<AudioListener>().enabled = false;
         player.AddComponent<AudioListener>();
 
     }
@@ -341,7 +343,6 @@ public class GameServerManager : MonoBehaviourPunCallbacks, IPunObservable
         returnTimeScale = Time.timeScale;
         Time.timeScale = 0.001f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        //Time.fixedDeltaTime = 0;
     }
 
     [PunRPC]
@@ -351,7 +352,6 @@ public class GameServerManager : MonoBehaviourPunCallbacks, IPunObservable
         //Time.timeScale = 1;
         Time.timeScale = returnTimeScale;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        
     }
 
     [PunRPC]

@@ -3,7 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -30,10 +32,10 @@ public class CardManager : MonoBehaviour
     [SerializeField] Sprite[] images;
     [SerializeField] Sprite[] rank;
 
-    TMP_Text remainWood;
-    TMP_Text remainIron;
-    int remainWoodI = 100;
-    int remainIronI = 100;
+    public TMP_Text remainWood;
+    public TMP_Text remainIron;
+    public int remainWoodI = 100;
+    public int remainIronI = 100;
 
     Button ready;
     Button reload;
@@ -61,7 +63,7 @@ public class CardManager : MonoBehaviour
             cards[i].rank = cardsGO[i].transform.Find("Shield").GetComponent<Image>();
 
             switch (GameServerManager.instance.resolutionMode)
-            { //Ä«µåÀÇ ¼³¸íÀÌ ³·Àº ÇØ»óµµ¿¡¼­ ³Ê¹« Ä¿Áö´Â ¹®Á¦ ¼öÁ¤¿ë
+            { //ì¹´ë“œì˜ ì„¤ëª…ì´ ë‚®ì€ í•´ìƒë„ì—ì„œ ë„ˆë¬´ ì»¤ì§€ëŠ” ë¬¸ì œ ìˆ˜ì •ìš©
                 case 0:
                     cards[i].desc.fontSizeMax = 35;
                     cards[i].title.fontSizeMax = 45;
@@ -94,12 +96,12 @@ public class CardManager : MonoBehaviour
             rand = UnityEngine.Random.Range(1, tmpDeck.Count);
             tmpCardDef = tmpDeck[rand];
             try
-            { //ÀÖÀ¸¸é °¡Á®´Ù ¾²°í
+            { //ìžˆìœ¼ë©´ ê°€ì ¸ë‹¤ ì“°ê³ 
                 //Debug.Log(tmpCardDef.title + " : " + tmpCardDef.cardCode);
                 cards[i].img.sprite = images[tmpCardDef.cardCode];
             }
             catch
-            { //¾øÀ¸¸é ±âº» ÀÌ¹ÌÁö·Î
+            { //ì—†ìœ¼ë©´ ê¸°ë³¸ ì´ë¯¸ì§€ë¡œ
                 cards[i].img.sprite = images[images.Length - 1];
             }
             
@@ -142,121 +144,21 @@ public class CardManager : MonoBehaviour
 
     public void CardSelect(int _cNum)
     {
-        //_cNumÀº -1 ¾²´Â°Í ÁÖÀÇ
+        //_cNumì€ -1 ì“°ëŠ”ê²ƒ ì£¼ì˜
         if (remainIronI >= cards[_cNum - 1].resIronI && remainWoodI >= cards[_cNum - 1].resWoodI)
         {
+            if (cards[_cNum - 1].def.title == "ìž¬í™œìš©" && GameManager.instance.trainCount <= 1)
+            {
+                cards[_cNum - 1].rank.color = Color.blue;
+                return;
+            }
             remainIronI -= cards[_cNum - 1].resIronI;
             remainWoodI -= cards[_cNum - 1].resWoodI;
 
             remainIron.text = remainIronI.ToString();
             remainWood.text = remainWoodI.ToString();
 
-            switch (cards[_cNum - 1].def.cardCode) //ÀÓ½Ã·Î »ç¿ë
-            {
-                case 0:
-                    GunManager.instance.attackSpeedMultiplier += 15;
-                    GunManager.instance.reloadMultiplier *= (100 + (-5)) / 100;
-                break;
-
-                case 1:
-                    GunManager.instance.damageMultiplier += 75;
-                    GunManager.instance.attackSpeedMultiplier *= (100 + (-15)) / 100;
-                    GunManager.instance.reloadMultiplier *= (100 + (-15)) / 100;
-                    break;
-
-                case 2:
-                    GunManager.instance.ammoMultiplier += 15;
-                    break;
-
-                case 3:
-                    remainIronI += UnityEngine.Random.Range(0, 11);
-                    remainWoodI += UnityEngine.Random.Range(0, 11);
-                    remainIron.text = remainIronI.ToString();
-                    remainWood.text = remainWoodI.ToString();
-                    break;
-
-                case 4:
-                    GameManager.instance.trainCount++;
-                    break;
-
-                case 5:
-                    //TrainManager.instance.GetTrain(GameManager.instance.trainCount).GetComponent<Train>().RestoreHealth();
-                    break;
-
-                case 6:
-                    //TrainManager.instance.GetTrain(GameManager.instance.trainCount).GetComponent<Train>().maxHealth =
-                    //    (int)(TrainManager.instance.GetTrain(GameManager.instance.trainCount).GetComponent<Train>().maxHealth * 1.07f);
-                    break;
-
-                case 7:
-                    break;
-
-                case 8:
-                    GameServerManager.instance.player.GetComponent<PlayerMovement>().moveSpeed *= 1.1f;
-                    break;
-
-                case 9:
-                    GameManager.instance.trainCount++;
-                    remainIronI += 10;
-                    remainWoodI += 10;
-                    remainIron.text = remainIronI.ToString();
-                    remainWood.text = remainWoodI.ToString();
-                    break;
-
-                case 10:
-                    break;
-
-                case 11:
-                    GunManager.instance.damageMultiplier += 8;
-                    break;
-
-                case 12:
-                    GunManager.instance.attackSpeedMultiplier *= (100 + (50)) / 100;
-                    GunManager.instance.ammoMultiplier += 100;
-                    GunManager.instance.reloadMultiplier *= (100 + (-30)) / 100;
-                    break;
-
-                case 13:
-                    GunManager.instance.pierceAdd += 5;
-                    break;
-
-                case 14:
-                    GunManager.instance.attackSpeedMultiplier *= (100 + (10)) / 100;
-                    break;
-
-                case 15:
-                    GunManager.instance.ammoMultiplier += -10;
-                    GunManager.instance.reloadMultiplier *= (100 + (15)) / 100;
-                    break;
-
-                case 16:
-                    GunManager.instance.reloadMultiplier *= (100 + (15)) / 100;
-                    break;
-
-                case 17:
-                    GameManager.instance.timeAfternoonValue += 5;
-                    GameManager.instance.wfs_Afternoon = new WaitForSeconds(GameManager.instance.timeAfternoonValue);
-                    break;
-
-                case 18:
-                    //for (int i = 0; i < 5; i++)
-                    //{
-                    //    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth /= 2;
-                    //}
-                    ZombieManager.instance.speedMultiplier *= 1.25f;
-                    GunManager.instance.reloadMultiplier *= (100 + (300)) / 100;
-                    break;
-
-                case 19:
-                    break;
-
-                case 20:
-                    break;
-
-                case 21:
-                    break;
-
-            }
+            cards[_cNum - 1].def.Selected();
 
             if (!cards[_cNum-1].def.reuseable)
             {
