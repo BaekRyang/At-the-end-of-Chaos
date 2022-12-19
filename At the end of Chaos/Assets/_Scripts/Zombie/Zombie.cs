@@ -5,28 +5,30 @@ using UnityEngine;
 
 public class Zombie : MonoBehaviourPun, IPunObservable
 {
-    GameObject train;
-    GameObject ground;
-    Rigidbody rigid;
+    protected GameObject train;
+    protected GameObject ground;
+    protected Rigidbody rigid;
 
     //공격할 대상
-    [SerializeField] GameObject target;
+    [SerializeField] protected GameObject target;
 
     [SerializeField] public int health;
-    [SerializeField] float def;
-    [SerializeField] float speed;
-    int attackPoint;
+    [SerializeField] protected float def;
+    [SerializeField] protected float speed;
+    protected int attackPoint;
 
     //공격까지의 대기 시간
-    float attackDelay = 1f;
+    protected float attackDelay = 1f;
     //현재 좀비의 대기 시간
-    [SerializeField] float attackDelayTime;
+    [SerializeField] protected float attackDelayTime;
 
     public bool targeting = true;
 
     public PhotonView pv;
 
-    int takenDamage = 0;
+    protected int takenDamage = 0;
+
+    IEnumerator ie;
 
 
     void Start()
@@ -39,17 +41,17 @@ public class Zombie : MonoBehaviourPun, IPunObservable
         pv = GetComponent<PhotonView>();
     }
 
-    void Update()
+    protected void Update()
     {
         //target = train.GetComponent<TrainManager>().GetTrain(GameManager.instance.trainCount);
         //rigid.velocity = (target.transform.position - transform.position).normalized * Time.deltaTime * speed;
         //Vector3 vec = transform.position;
         //vec.x -= Time.deltaTime * 2f;
         //transform.position = vec;
-            target = train.GetComponent<TrainManager>().GetTrain(GameManager.instance.trainCount);
-            Vector3 zombieToTarget = target.transform.position - transform.position;
-            transform.rotation = Quaternion.Euler(new Vector3(0, Mathf.Atan2(zombieToTarget.x, zombieToTarget.z) * Mathf.Rad2Deg, 0));
-        
+        target = train.GetComponent<TrainManager>().GetTrain(GameManager.instance.trainCount);
+        Vector3 zombieToTarget = target.transform.position - transform.position;
+        transform.rotation = Quaternion.Euler(new Vector3(0, Mathf.Atan2(zombieToTarget.x, zombieToTarget.z) * Mathf.Rad2Deg, 0));
+
         //if (GameManager.instance.timeState == TimeState.nightStart)
         //{
         //    Debug.Log("STR");
@@ -61,7 +63,7 @@ public class Zombie : MonoBehaviourPun, IPunObservable
         //}
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (targeting)
         {
@@ -78,24 +80,24 @@ public class Zombie : MonoBehaviourPun, IPunObservable
         //transform.position = vec;
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
-        //if (collision.gameObject == train)
-        //{
-        //    attackDelayTime += Time.deltaTime;
-        //    if (attackDelayTime > attackDelay)
-        //    {
-        //        attackDelayTime = 0f;
-        //        AttackFromZombie();
-        //    }
-        //}
+        if (collision.gameObject.tag == "Train")
+        {
+            ie = Attack();
+            StartCoroutine(ie);
+        }
     }
 
-    private void OnCollisionExit(Collision collision)
+    protected void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject == train)
+        if (collision.gameObject.tag == "Train")
         {
-            attackDelayTime = 0f;
+            if (ie != null)
+            {
+                ie = null;
+                StopCoroutine(ie);
+            }
         }
     }
 
@@ -133,5 +135,15 @@ public class Zombie : MonoBehaviourPun, IPunObservable
     {
         //throw new System.NotImplementedException();
     }
+
+    protected virtual IEnumerator Attack()
+    {
+        while(true)
+        {
+            target.GetComponent<Train>().Attacked();
+            SoundPlayer.instance.PlaySound(SoundPlayer.instance.TrainAttacked, transform.position);
+
+            yield return new WaitForSeconds(3f);
+        }
+    }
 }
-    
