@@ -16,9 +16,9 @@ public class TrainManager : MonoBehaviour
     [SerializeField] SerializableDictionary<int, GameObject> _trains = new SerializableDictionary<int, GameObject>();
 
     public int healthMultiplier = 100;
-    public int maxHealth = 50;
+    public int maxHealth = 100;
 
-    void Start()
+    void Awake()
     {
         instance = this;
     }

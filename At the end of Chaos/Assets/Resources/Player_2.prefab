@@ -195,6 +195,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 1048640
+  loadTime: 0
   targetingLazer: {fileID: 0}
   testSp: {fileID: 0}
   r2b:

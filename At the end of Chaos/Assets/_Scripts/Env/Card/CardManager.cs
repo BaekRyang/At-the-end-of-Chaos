@@ -51,6 +51,7 @@ public class CardManager : MonoBehaviour
         cards = new Card[4];
         for (int i = 0; i < 4; i++)
         {
+            Debug.Log(UIAnchor.transform.Find("CardPanel").GetChild(i).gameObject.name);
             cardsGO[i] = UIAnchor.transform.Find("CardPanel").GetChild(i).gameObject;
             playersGO[i] = UIAnchor.transform.Find("Other UI").GetChild(i).gameObject;
 
@@ -134,14 +135,12 @@ public class CardManager : MonoBehaviour
 
             cards[i].resWoodI = tmpCardDef.resWood;
             cards[i].resIronI = tmpCardDef.resIron;
-            cards[i].rank.sprite = rank[tmpCardDef.rank-1];
+            cards[i].rank.sprite = rank[tmpCardDef.rank - 1];
             cards[i].rank.color = Color.white;
             tmpDeck.RemoveAt(rand);
         }
-        //remainIron.text = remainIronI.ToString();
-        //remainWood.text = remainWoodI.ToString();
-        remainIron.text = GameManager.instance.ironResource.ToString();
-        remainWood.text = GameManager.instance.woodResource.ToString();
+        remainIron.text = remainIronI.ToString();
+        remainWood.text = remainWoodI.ToString();
     }
 
     public void CardSelect(int _cNum)
@@ -154,15 +153,18 @@ public class CardManager : MonoBehaviour
                 cards[_cNum - 1].rank.color = Color.blue;
                 return;
             }
-            //remainIronI -= cards[_cNum - 1].resIronI;
-            //remainWoodI -= cards[_cNum - 1].resWoodI;
-            GameManager.instance.ironResource -= cards[_cNum - 1].resIronI;
-            GameManager.instance.woodResource -= cards[_cNum - 1].resWoodI;
 
-            //remainIron.text = remainIronI.ToString();
-            //remainWood.text = remainWoodI.ToString();
-            remainIron.text = GameManager.instance.ironResource.ToString();
-            remainWood.text = GameManager.instance.woodResource.ToString();
+            if (cards[_cNum-1].def.cardCode == 20)
+            {
+                cards[_cNum - 1].rank.color = Color.blue;
+                return;
+            }
+
+            remainIronI -= cards[_cNum - 1].resIronI;
+            remainWoodI -= cards[_cNum - 1].resWoodI;
+
+            remainIron.text = remainIronI.ToString();
+            remainWood.text = remainWoodI.ToString();
 
             cards[_cNum - 1].def.Selected();
 

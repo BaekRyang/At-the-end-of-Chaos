@@ -11,14 +11,27 @@ public class Train : MonoBehaviour
     [SerializeField] int health = 20;
     [SerializeField] bool invincible;
 
-    public int maxHealth = 20;
+    public int maxHealth = 1;
+
+    PhotonView pv;
 
     void Start()
     {
+        maxHealth = TrainManager.instance.maxHealth;
+        pv = GetComponent<PhotonView>();
         health = maxHealth;
     }
 
     public void Attacked()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            pv.RPC("Attack_", RpcTarget.AllBuffered);
+        }
+    }
+
+    [PunRPC]
+    void Attack_()
     {
         if (!invincible)
         {

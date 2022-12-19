@@ -60,7 +60,6 @@ public class PlayerMovement : MonoBehaviour
             TrainManager trainManager = GameObject.Find("TrainManager").GetComponent<TrainManager>();
             GameObject myPosObj = trainManager.GetTrain(GameManager.instance.trainCount);
 
-            Debug.Log(myPosObj.transform.Find("Player_" + pv.CreatorActorNr + "_Pos").name);
             transform.position = myPosObj.transform.Find("Player_"+ pv.CreatorActorNr + "_Pos").position;
             return;
         }

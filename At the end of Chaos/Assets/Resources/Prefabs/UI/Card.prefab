@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 539831128994983884}
   - component: {fileID: 1441122901605768108}
-  - component: {fileID: 8392207400832993178}
+  - component: {fileID: 1498332884860218559}
   m_Layer: 5
   m_Name: Shield
   m_TagString: Untagged
@@ -46,7 +46,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 795808654476603034}
   m_CullTransparentMesh: 1
---- !u!114 &8392207400832993178
+--- !u!114 &1498332884860218559
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

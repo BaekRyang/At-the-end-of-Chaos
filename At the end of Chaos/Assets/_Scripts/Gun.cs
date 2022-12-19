@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 
 public class Gun : MonoBehaviour
 {
-    [SerializeField] GunType typeOnHand;
+    public GunType typeOnHand;
     [SerializeField] int rounds; //��ź��
     [SerializeField] public static float range;
     [SerializeField] float gunShootingTime = 0.2f;
@@ -20,6 +20,8 @@ public class Gun : MonoBehaviour
     float hitOffset = 0.5f;
 
     GameObject fireLight;
+
+    public float loadTime = 0f;
 
     Transform pistolFireTransform;
     Transform shotgunFireTransform;
@@ -70,6 +72,7 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
+        loadTime -= Time.deltaTime;
         if (pv.IsMine && rounds > 0)
         {
             gun = gameObject.transform.Find(typeOnHand.ToString());
@@ -130,8 +133,31 @@ public class Gun : MonoBehaviour
                 //    }
                 //}
 
-                if (CrossPlatformInputManager.GetButtonDown("Shoot"))
+                if (CrossPlatformInputManager.GetButton("Shoot"))
                 {
+                    if (loadTime > 0)
+                    {
+                        return;
+                    } else
+                    {
+                        switch (typeOnHand)
+                        {
+                            case GunType.Pistol:
+                                loadTime = 0.3f / (GunManager.instance.attackSpeedMultiplier / 100);
+                                break;
+                            case GunType.SniperRifle:
+                                loadTime = 1.0f / (GunManager.instance.attackSpeedMultiplier / 100);
+                                break;
+                            case GunType.AssaultRifle:
+
+                                loadTime = 0.08f / (GunManager.instance.attackSpeedMultiplier / 100);
+                                break;
+                            default:
+                                loadTime = 0.3f / (GunManager.instance.attackSpeedMultiplier / 100);
+                                break;
+                        }
+                    }
+
                     if (typeOnHand != GunType.Shotgun)
                     {
                         BulletTrailManager.instance.pv.RPC("PlayEffect", RpcTarget.All, gunPos, hitOffsetPos);
@@ -199,6 +225,7 @@ public class Gun : MonoBehaviour
             case GunType.Pistol:
                 damage = 30f;
                 knockbackMul = 1f;
+                loadTime = 0.3f;
                 break;
             case GunType.Shotgun:
                 damage = 30f;
@@ -207,14 +234,17 @@ public class Gun : MonoBehaviour
             case GunType.SniperRifle:
                 damage = 200f;
                 knockbackMul = 1f;
+                loadTime = 1f;
                 break;
             case GunType.AssaultRifle:
                 damage = 30f;
                 knockbackMul = 1f;
+                loadTime = 0.08f;
                 break;
             default:
                 damage = 0f;
                 knockbackMul = 0;
+                loadTime = 0.08f;
                 break;
         }
         int crit = Random.Range(1, 101);
@@ -234,8 +264,6 @@ public class Gun : MonoBehaviour
 
     IEnumerator Reload()
     {
-        Debug.Log("호출");
-
         if (pv.IsMine)
         {
             targetingLazer.enabled = false;
@@ -370,15 +398,31 @@ public class Gun : MonoBehaviour
         {
             case GunType.Pistol:
                 gunFireSFX = SoundPlayer.instance.pistolFire;
+                transform.GetChild(3).gameObject.SetActive(true);
+                transform.GetChild(4).gameObject.SetActive(false);
+                transform.GetChild(5).gameObject.SetActive(false);
+                transform.GetChild(6).gameObject.SetActive(false);
                 break;
             case GunType.Shotgun:
                 gunFireSFX = SoundPlayer.instance.shotgunFire;
+                transform.GetChild(3).gameObject.SetActive(false);
+                transform.GetChild(4).gameObject.SetActive(true);
+                transform.GetChild(5).gameObject.SetActive(false);
+                transform.GetChild(6).gameObject.SetActive(false);
                 break;
             case GunType.SniperRifle:
                 gunFireSFX = SoundPlayer.instance.sniperFire;
+                transform.GetChild(3).gameObject.SetActive(false);
+                transform.GetChild(4).gameObject.SetActive(false);
+                transform.GetChild(5).gameObject.SetActive(true);
+                transform.GetChild(6).gameObject.SetActive(false);
                 break;
             case GunType.AssaultRifle:
                 gunFireSFX = SoundPlayer.instance.assaultFire;
+                transform.GetChild(3).gameObject.SetActive(false);
+                transform.GetChild(4).gameObject.SetActive(false);
+                transform.GetChild(5).gameObject.SetActive(false);
+                transform.GetChild(6).gameObject.SetActive(true);
                 break;
             default:
                 break;

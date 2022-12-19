@@ -13,9 +13,9 @@ public class Resource : MonoBehaviour
     private void OnEnable()
     {
         if (tag == "WoodResource")
-            wood = new System.Random().Next(3) + 2;
+            wood = new System.Random().Next(5) + 3;
         else
-            iron = new System.Random().Next(3) + 2;
+            iron = new System.Random().Next(5) + 3;
     }
 
     private void OnDestroy()

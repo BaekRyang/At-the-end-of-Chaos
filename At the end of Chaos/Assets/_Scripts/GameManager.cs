@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
     [Header("TimeStateValue")]
     public float timeAfternoonValue = 60f;
     float timeUpgradeValue = 1f;
-    float timeNightValue = 120f;
+    float timeNightValue = 40f;
     float timeNightStartValue = 3f;
     float timeNightEndValue = 3;
     float timeStartPhase = 2;
@@ -270,12 +270,12 @@ public class GameManager : MonoBehaviour
                 break;
 
             case TimeState.upgrade:
-                CardManager.instance.ResetCard();
-                CardManager.instance.EnableCard();
                 joystick.SetActive(false);
                 shootBtn.SetActive(false);
                 //timeUI_afternoon.SetActive(false);
                 select_UI.SetActive(true);
+                CardManager.instance.ResetCard();
+                CardManager.instance.EnableCard();
                 break;
 
             case TimeState.nightStart:
@@ -429,9 +429,10 @@ public class GameManager : MonoBehaviour
 
     public void inCreaseResource(int _wood, int _iron)
     {
-        Debug.Log("Resource : " + _wood + ", " + _iron);
-        woodResource += _wood;
-        ironResource += _iron;
+        CardManager.instance.remainWoodI += _wood;
+        CardManager.instance.remainIronI += _iron;
+        CardManager.instance.remainWood.text = CardManager.instance.remainWoodI.ToString();
+        CardManager.instance.remainIron.text = CardManager.instance.remainIronI.ToString();
     }
 
 }

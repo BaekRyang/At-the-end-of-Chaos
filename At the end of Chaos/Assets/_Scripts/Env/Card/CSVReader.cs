@@ -229,10 +229,23 @@ public class CSVReader : MonoBehaviour
                 }
             } else if (tmpCard.type == 3)
             {
-                tmpCard.Selected += () =>
+                switch (tmpCard.cardCode)
                 {
-                    Debug.Log("총 변경");
-                };
+                    case 19:
+                        tmpCard.Selected += () =>
+                        {
+                            GameServerManager.instance.ChangeGun(GunType.SniperRifle);
+                        };
+                        break;
+
+                    case 21:
+                        tmpCard.Selected += () =>
+                        {
+                            GameServerManager.instance.ChangeGun(GunType.AssaultRifle);
+                        };
+                        break;
+                }
+                
             }
             else
             {
@@ -242,7 +255,7 @@ public class CSVReader : MonoBehaviour
                     {
                         CardManager.instance.remainWoodI += UnityEngine.Random.Range(0, 12);
                         CardManager.instance.remainWood.text = CardManager.instance.remainWoodI.ToString();
-                         CardManager.instance.remainIronI += UnityEngine.Random.Range(0, 12);
+                        CardManager.instance.remainIronI += UnityEngine.Random.Range(0, 12);
                         CardManager.instance.remainIron.text = CardManager.instance.remainIronI.ToString();
                     };
                 }

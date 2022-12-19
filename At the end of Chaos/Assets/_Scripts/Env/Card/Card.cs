@@ -23,8 +23,9 @@ public class Card : MonoBehaviour
 
     private void Start()
     {
+        tmpColor = Color.white;
         cMgr = GameServerManager.instance.GetComponent<CardManager>();
-        rank = GetComponent<Image>();
+        rank = transform.Find("Shield").GetComponent<Image>();
     }
 
     private void Update()

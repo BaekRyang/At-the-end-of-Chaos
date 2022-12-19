@@ -364,7 +364,7 @@ public class GameServerManager : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     
-    public void CV(int _type, float _value)
+    public void CV(int _type, int _value)
     {
         pv.RPC("ChangeValue", RpcTarget.All, _type, _value);
     }
@@ -437,5 +437,11 @@ public class GameServerManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         yield return new WaitForSeconds(_time);
         _callback();
+    }
+
+    [PunRPC]
+    public void ChangeGun(GunType _gun)
+    {
+        player.GetComponent<Gun>().EquipGun(_gun);
     }
 }
