@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using WebSocketSharp;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -360,6 +361,76 @@ public class GameServerManager : MonoBehaviourPunCallbacks, IPunObservable
         CardManager.instance.playersGO[_num].transform.GetChild(0).GetComponent<TMP_Text>().text = "<color=white>I'm Ready!</color>";
         CardManager.instance.playersGO[_num].GetComponent<Image>().color = UnityEngine.Color.gray;
         //playersGO[GameServerManager.instance.character - 1].transform.GetChild(1).GetComponent<TMP_Text>().text = "<color=green>" + _cNum.ToString() + ". " + cards[_cNum - 1].def.title + "</color>";
+    }
+
+    
+    public void CV(int _type, float _value)
+    {
+        pv.RPC("ChangeValue", RpcTarget.All, _type, _value);
+    }
+
+    [PunRPC]
+    public void ChangeValue(int _type, int _value)
+    {
+        switch( _type )
+        {
+            case 1:
+                GameManager.instance.timeAfternoonValue += _value;
+                GameManager.instance.wfs_Afternoon = new WaitForSeconds(GameManager.instance.timeAfternoonValue);
+                break;
+
+            case 2:
+                ZombieManager.instance.speedMultiplier *= _value;
+                break;
+
+            case 3:
+                CardManager.instance.remainWoodI += _value;
+                CardManager.instance.remainWood.text = CardManager.instance.remainWoodI.ToString();
+                break;
+
+            case 4:
+                CardManager.instance.remainIronI += _value;
+                CardManager.instance.remainIron.text = CardManager.instance.remainIronI.ToString();
+                break;
+
+            case 5:
+                GameManager.instance.trainCount += _value;
+                break;
+
+            case 6:
+                for (int i = 1; i <= 5; i++)
+                {
+                    TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp =
+
+                    TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp =
+                    Math.Clamp((TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp +
+                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth * _value / 100),
+                    1,
+                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth); ;
+                }
+                break;
+
+            case 7:
+                TrainManager.instance.healthMultiplier += _value;
+                for (int i = 1; i <= 5; i++)
+                {
+                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth =
+                    TrainManager.instance.maxHealth * TrainManager.instance.healthMultiplier / 100;
+
+                    TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp =
+                    Math.Clamp(TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp,
+                    0,
+                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth);
+                }
+                break;
+
+            case 8:
+                GunManager.instance.criticalHit += _value;
+                break;
+
+            default:
+                break;
+        }
     }
 
     private IEnumerator waitCall(float _time, Action _callback)

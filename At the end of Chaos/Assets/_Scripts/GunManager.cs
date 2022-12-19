@@ -27,6 +27,7 @@ public class GunManager : MonoBehaviour
     public float ammoMultiplier = 100;
     public float reloadMultiplier = 100;
     public float pierceAdd = 0;
+    public int criticalHit = 80;
 
 
     public float gunDamage

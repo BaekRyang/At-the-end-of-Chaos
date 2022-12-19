@@ -184,6 +184,12 @@ public class Gun : MonoBehaviour
                 knockbackMul = 0;
                 break;
         }
+        int crit = Random.Range(1, 101);
+        if (crit <= GunManager.instance.criticalHit)
+        {
+            Debug.Log("crit " + crit + " calc->" + GunManager.instance.criticalHit);
+            damage *= 2;
+        }
         target.GetComponent<Zombie>().AttackFromPlayer(damage, 0f, knockBack * knockbackMul);
         if (--rounds <= 0)
         {

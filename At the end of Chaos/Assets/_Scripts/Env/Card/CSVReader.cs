@@ -139,11 +139,7 @@ public class CSVReader : MonoBehaviour
                         case "열차의 수":
                             tmpCard.Selected += () =>
                             {
-                                GameManager.instance.trainCount += _input;
-                                if (GameManager.instance.trainCount < 1)
-                                {
-                                    Debug.Log("열차가 하나도 없어요!");
-                                }
+                                GameServerManager.instance.CV(5, _input);
                                 Debug.Log(_name + " : " + _input);
                             };
                             break;
@@ -151,17 +147,7 @@ public class CSVReader : MonoBehaviour
                         case "최대 체력":
                             tmpCard.Selected += () =>
                             {
-                                TrainManager.instance.healthMultiplier += _input;
-                                for (int i = 1; i <= 5; i++)
-                                {
-                                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth =
-                                    TrainManager.instance.maxHealth * TrainManager.instance.healthMultiplier / 100;
-
-                                    TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp =
-                                    Math.Clamp(TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp,
-                                    0,
-                                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth);
-                                }
+                                GameServerManager.instance.CV(7, _input);
                                 Debug.Log(_name + " : " + _input);
                             };
                             break;
@@ -169,16 +155,7 @@ public class CSVReader : MonoBehaviour
                         case "체력":
                             tmpCard.Selected += () =>
                             {
-                                for (int i = 1; i <= 5; i++)
-                                {
-                                    TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp =
-
-                                    TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp =
-                                    Math.Clamp((TrainManager.instance.GetTrain(i).GetComponent<Train>().Hp +
-                                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth * _input / 100),
-                                    1,
-                                    TrainManager.instance.GetTrain(i).GetComponent<Train>().maxHealth); ;
-                                }
+                                GameServerManager.instance.CV(6, _input);
                                 Debug.Log(_name + " : " + _input);
                             };
                             break;
@@ -209,8 +186,7 @@ public class CSVReader : MonoBehaviour
                         case "낮시간":
                             tmpCard.Selected += () =>
                             {
-                                GameManager.instance.timeAfternoonValue += _input;
-                                GameManager.instance.wfs_Afternoon = new WaitForSeconds(GameManager.instance.timeAfternoonValue);
+                                GameServerManager.instance.CV(1, _input);
                                 Debug.Log(_name + " : " + _input);
                             };
                             break;
@@ -218,7 +194,7 @@ public class CSVReader : MonoBehaviour
                         case "좀비의 속도":
                             tmpCard.Selected += () =>
                             {
-                                ZombieManager.instance.speedMultiplier *= 1.25f;
+                                GameServerManager.instance.CV(2, _input);
                                 Debug.Log(_name + " : " + _input);
                             };
                             break;
@@ -226,8 +202,7 @@ public class CSVReader : MonoBehaviour
                         case "나무":
                             tmpCard.Selected += () =>
                             {
-                                CardManager.instance.remainWoodI += 10;
-                                CardManager.instance.remainWood.text = CardManager.instance.remainWoodI.ToString();
+                                GameServerManager.instance.CV(3, _input);
                                 Debug.Log(_name + " : " + _input);
                             };
                             break;
@@ -235,8 +210,15 @@ public class CSVReader : MonoBehaviour
                         case "고철":
                             tmpCard.Selected += () =>
                             {
-                                CardManager.instance.remainIronI += 10;
-                                CardManager.instance.remainIron.text = CardManager.instance.remainIronI.ToString();
+                                GameServerManager.instance.CV(4, _input);
+                                Debug.Log(_name + " : " + _input);
+                            };
+                            break;
+
+                        case "치명타":
+                            tmpCard.Selected += () =>
+                            {
+                                GameServerManager.instance.CV(8, _input);
                                 Debug.Log(_name + " : " + _input);
                             };
                             break;
@@ -254,10 +236,24 @@ public class CSVReader : MonoBehaviour
             }
             else
             {
-                tmpCard.Selected += () =>
+                if (tmpCard.cardCode == 3)
                 {
-                    Debug.Log("미할당");
-                };
+                    tmpCard.Selected += () =>
+                    {
+                        CardManager.instance.remainWoodI += UnityEngine.Random.Range(0, 12);
+                        CardManager.instance.remainWood.text = CardManager.instance.remainWoodI.ToString();
+                         CardManager.instance.remainIronI += UnityEngine.Random.Range(0, 12);
+                        CardManager.instance.remainIron.text = CardManager.instance.remainIronI.ToString();
+                    };
+                }
+                //else if (tmpCard.cardCode == 10)
+                //{
+                //    tmpCard.Selected += () =>
+                //    {
+                //        Debug.Log("미할당");
+                //    };
+                //} else if 
+                
             }
             
 
