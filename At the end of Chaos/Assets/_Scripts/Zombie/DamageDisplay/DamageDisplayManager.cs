@@ -30,14 +30,14 @@ public class DamageDisplayManager : MonoBehaviour
         }
     }
 
-    public void Display(float _damage, Vector3 _pos)
+    public void Display(float _damage, Vector3 _pos, Color _color)
     {
         for (int i = 0; i < damageDisplayPoolSize; i++)
         {
             if (!damageDisplay[i].activeSelf)
             {
                 damageDisplay[i].SetActive(true);
-                damageDisplay[i].GetComponent<DamageDisplayer>().Display(_damage, _pos, Color.yellow);
+                damageDisplay[i].GetComponent<DamageDisplayer>().Display(_damage, _pos, _color);
                 break;
             }
         }

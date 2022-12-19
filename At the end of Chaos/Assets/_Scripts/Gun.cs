@@ -193,10 +193,12 @@ public class Gun : MonoBehaviour
         int crit = Random.Range(1, 101);
         if (crit <= GunManager.instance.criticalHit)
         {
-            Debug.Log("crit " + crit + " calc->" + GunManager.instance.criticalHit);
             damage *= 2;
+            target.GetComponent<Zombie>().AttackFromPlayer(damage, 0f, knockBack * knockbackMul, Color.red);
+        } else
+        {
+            target.GetComponent<Zombie>().AttackFromPlayer(damage, 0f, knockBack * knockbackMul, Color.yellow);
         }
-        target.GetComponent<Zombie>().AttackFromPlayer(damage, 0f, knockBack * knockbackMul);
         if (--rounds <= 0)
         {
             StartCoroutine(Reload());
@@ -245,9 +247,15 @@ public class Gun : MonoBehaviour
         {
             testSp.SetActive(false);
             targetingLazer.enabled = false;
+            transform.GetChild(1).gameObject.SetActive(false);
+            transform.GetChild(0).gameObject.SetActive(true);
+            transform.GetChild(3).gameObject.SetActive(false);
         }
         else
         {
+            transform.GetChild(1).gameObject.SetActive(true);
+            transform.GetChild(0).gameObject.SetActive(false);
+            transform.GetChild(3).gameObject.SetActive(true);
             Reload();
         }
     }

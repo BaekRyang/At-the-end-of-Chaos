@@ -107,7 +107,7 @@ public class ZombieManager : MonoBehaviour
             colliders[i].GetComponent<Zombie>().GetComponent<Rigidbody>().AddExplosionForce(a, vec, b, c);
             int explosionDamage = colliders[i].GetComponent<Zombie>().health / 2;
             explosionDamage--;
-            DamageDisplayManager.instance.Display(explosionDamage, colliders[i].transform.position);
+            DamageDisplayManager.instance.Display(explosionDamage, colliders[i].transform.position, Color.magenta);
             colliders[i].GetComponent<Zombie>().health -= explosionDamage;
         }
         yield return new WaitForSeconds(3f);

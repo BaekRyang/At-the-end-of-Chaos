@@ -24,7 +24,7 @@ public class VFXPlayer : MonoBehaviourPun
         instance = this;
         pv = GameServerManager.instance.pv;
 
-        destroyTime = new WaitForSeconds(destroyDelay);
+        destroyTime = new WaitForSeconds(destroyDelay); 
 
         particlesPool.Add(Resources.LoadAll<GameObject>("VFX/Gun/GunSpark")[0].GetComponent<ParticleSystem>());
     }

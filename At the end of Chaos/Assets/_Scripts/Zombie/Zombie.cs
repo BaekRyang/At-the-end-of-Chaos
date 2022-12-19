@@ -73,6 +73,9 @@ public class Zombie : MonoBehaviourPun, IPunObservable
             zombieToTarget = zombieToTarget.normalized * speed + Vector3.left;
             zombieToTarget.y = rigid.velocity.y;
             rigid.velocity = zombieToTarget;
+        } else
+        {
+            rigid.velocity = Vector3.left * 5;
         }
 
         //Vector3 vec = transform.position;
@@ -114,7 +117,7 @@ public class Zombie : MonoBehaviourPun, IPunObservable
     }
 
 
-    public void AttackFromPlayer(float damage, float pierce, Vector3 vec)
+    public void AttackFromPlayer(float damage, float pierce, Vector3 vec, Color _color)
     {
         GetComponent<Rigidbody>().velocity = Vector3.zero;
         GetComponent<Rigidbody>().AddForce(vec.normalized * 10f, ForceMode.Impulse);
@@ -122,7 +125,7 @@ public class Zombie : MonoBehaviourPun, IPunObservable
         takenDamage = (int)((1 - (def * (1 - pierce / 100)) / 100) * damage);
         health -= takenDamage;
 
-        DamageDisplayManager.instance.Display(takenDamage, transform.position);
+        DamageDisplayManager.instance.Display(takenDamage, transform.position, _color);
 
         //Debug.Log("Damage : " + "((1 - (" + def + " * (1 - " + pierce + " / 100)) / 100) * " + damage +")" + " =>(int) " + ((int)((1 - (def * (1 - pierce / 100)) / 100) * damage)) );
         //관통력 1 = 방어력의 1% 무시
@@ -138,7 +141,7 @@ public class Zombie : MonoBehaviourPun, IPunObservable
 
     protected virtual IEnumerator Attack()
     {
-        while(true)
+        while (true)
         {
             target.GetComponent<Train>().Attacked();
             SoundPlayer.instance.PlaySound(SoundPlayer.instance.TrainAttacked, transform.position);

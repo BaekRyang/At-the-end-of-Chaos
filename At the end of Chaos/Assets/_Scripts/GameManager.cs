@@ -29,13 +29,10 @@ public class GameManager : MonoBehaviour
     public GameObject trains;
 
     GameObject select_UI;
-    GameObject timeUI_afternoon;
-    GameObject timeUI_night;
     GameObject joystick;
     GameObject shootBtn;
+    Scrollbar timeLine;
     Light dirLight;
-    Image timeUI_Afternoon_Image;
-    Image timeUI_Night_Image;
 
     [SerializeField] int _stage = 0;
 
@@ -47,12 +44,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] double stateStartTime;
 
     [Header("TimeStateValue")]
-    [SerializeField] public float timeAfternoonValue = 60f;
-    [SerializeField] float timeUpgradeValue = 30f;
-    [SerializeField] float timeNightValue = 120f;
-    [SerializeField] float timeNightStartValue = 3f;
-    [SerializeField] float timeNightEndValue = 3;
-    [SerializeField] float timeStartPhase = 2;
+    public float timeAfternoonValue = 60f;
+    float timeUpgradeValue = 1f;
+    float timeNightValue = 120f;
+    float timeNightStartValue = 3f;
+    float timeNightEndValue = 3;
+    float timeStartPhase = 2;
 
     public WaitForSeconds wfs_Afternoon;
     WaitForSeconds wfs_Upgrade;
@@ -147,12 +144,9 @@ public class GameManager : MonoBehaviour
     {
         dirLight = GameObject.Find("DirectionalLight").GetComponent<Light>();
         select_UI = GameObject.Find("StaticCanvas").transform.Find("Select_UI").gameObject;
-        timeUI_afternoon = GameObject.Find("Canvas").transform.Find("Afternoon").gameObject;
-        timeUI_night = GameObject.Find("Canvas").transform.Find("Night").gameObject;
+        timeLine = GameObject.Find("Canvas").transform.Find("TimeLine").GetComponent<Scrollbar>();
         joystick = GameObject.Find("Canvas").transform.Find("Joystick").gameObject;
         shootBtn = GameObject.Find("Canvas").transform.Find("ShootBtn").gameObject;
-        timeUI_Afternoon_Image = timeUI_afternoon.GetComponent<Image>();
-        timeUI_Night_Image = timeUI_night.GetComponent<Image>();
         trainCount = 2;
         timeState = TimeState.none;
         StartCoroutine(LoadDelay());
@@ -188,7 +182,7 @@ public class GameManager : MonoBehaviour
         switch (timeState)
         {
             case TimeState.afternoon:
-                timeUI_Afternoon_Image.fillAmount = (float)((stateStartTime - Time.time) / timeAfternoonValue);
+                timeLine.value = (float)((stateStartTime - Time.time) / timeAfternoonValue) * -1;
                 break;
 
             case TimeState.upgrade:
@@ -204,7 +198,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case TimeState.night:
-                timeUI_Night_Image.fillAmount = (float)((stateStartTime - Time.time) / timeNightValue);
+                timeLine.value = 1 - (float)((stateStartTime - Time.time) / timeNightValue);
                 break;
 
             case TimeState.nightEnd:
@@ -280,10 +274,7 @@ public class GameManager : MonoBehaviour
                 CardManager.instance.EnableCard();
                 joystick.SetActive(false);
                 shootBtn.SetActive(false);
-                timeUI_night.transform.SetAsLastSibling();
-                timeUI_Afternoon_Image.fillAmount = 1f;
-                timeUI_night.SetActive(false);
-                timeUI_afternoon.SetActive(false);
+                //timeUI_afternoon.SetActive(false);
                 select_UI.SetActive(true);
                 break;
 
@@ -298,8 +289,6 @@ public class GameManager : MonoBehaviour
                 stateStartTime = Time.time;
                 yield return new WaitForSeconds(2f);
                 select_UI.SetActive(false);
-                timeUI_night.SetActive(true);
-                timeUI_afternoon.SetActive(true);
                 for (int i = 0; i < resourcePool.Count; i++)
                 {
                     Destroy(resourcePool[i]);
@@ -331,8 +320,6 @@ public class GameManager : MonoBehaviour
                 StopCoroutine(spawnZombie);
                 ZombieManager.instance.DestroyZombies();
                 ZombieManager.instance.StrongerZombies();
-                timeUI_afternoon.transform.SetAsLastSibling();
-                timeUI_Night_Image.fillAmount = 1f;
                 yield return wfs_NightEnd;
                 GameServerManager.instance.IReady = true;
                 break;
